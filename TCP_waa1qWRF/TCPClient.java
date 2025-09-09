@@ -1,5 +1,6 @@
-package BaiTap.waa1qWRF;
+package BaiTap.TCP_waa1qWRF;
 
+import BaiTap.Config.Config;
 import java.net.*;
 import java.io.*;
 
@@ -10,9 +11,8 @@ import java.io.*;
  */
 
 public class TCPClient {
-  private static final String SERVER_HOST = "203.162.10.109";
   private static final int SERVER_PORT = 2207;
-
+  private static final String SERVER_HOST = Config.SERVER_HOST;
   public static void main(String[] args) {
     Socket socket = null;
     DataInputStream dis = null;
@@ -25,9 +25,8 @@ public class TCPClient {
       dis = new DataInputStream(socket.getInputStream());
       dos = new DataOutputStream(socket.getOutputStream());
 
-            String studentCode = "B22DCCN482";
-            String qCode = "waa1qWRF";
-      String initialMessage = studentCode+";"+qCode;
+      String qCode = "waa1qWRF";
+      String initialMessage = Config.STUDENT_CODE+";"+qCode;
 
       dos.writeUTF(initialMessage);
       dos.flush();
@@ -40,7 +39,7 @@ public class TCPClient {
       System.out.println("Nhận mảng: " + arrayString);
 
       String result = processArray(arrayString, k);
-      System.out.println("Kết quả sau xử lý: " + result);
+      System.out.println("Xử lý xong!");
 
       dos.writeUTF(result);
       dos.flush();
