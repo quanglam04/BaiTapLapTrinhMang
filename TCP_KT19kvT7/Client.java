@@ -42,6 +42,8 @@ public class Client {
       System.out.println("Đã gửi kết quả lên Server: "+result);
     }
 
+    socket.close();
+
   }
 
   public static String process(String data) {

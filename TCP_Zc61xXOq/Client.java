@@ -43,6 +43,8 @@ public class Client {
       System.out.println("Xử lý xong: "+result);
     }
 
+    socket.close();
+
 
   }
 

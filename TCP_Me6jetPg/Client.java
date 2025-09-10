@@ -47,6 +47,8 @@ public class Client{
       os.flush();
       System.out.println("Đã xử lý xong và gửi kết quả lên server: "+result);
     }
+
+    socket.close();
   }
 
   public static boolean isPrime(int x){
