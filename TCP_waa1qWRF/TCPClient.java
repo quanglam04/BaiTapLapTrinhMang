@@ -5,9 +5,15 @@ import java.net.*;
 import java.io.*;
 
 /**
- * @author Trịnh Quang Lâm
- * @since 09/09/2025<br>
- * [qCode]: waa1qWRF<br>
+ [Mã câu hỏi (qCode): waa1qWRF].  Một chương trình server cho phép kết nối qua TCP tại cổng 2207 (hỗ trợ thời gian liên lạc tối đa cho mỗi yêu cầu là 5 giây). Yêu cầu xây dựng chương trình client thực hiện giao tiếp với server sử dụng luồng data (DataInputStream/DataOutputStream) để trao đổi thông tin theo thứ tự: <br>
+ a. Gửi mã sinh viên và mã câu hỏi theo định dạng "studentCode;qCode". <br>
+ Ví dụ: "B10DCCN003;C6D7E8F9" <br>
+ b. Nhận lần lượt: <br>
+ •	Một số nguyên k là độ dài đoạn.<br>
+ •	Chuỗi chứa mảng số nguyên, các phần tử được phân tách bởi dấu phẩy ",".<br>
+ Ví dụ: Nhận k = 3 và "1,2,3,4,5,6,7,8".<br>
+ c. Thực hiện chia mảng thành các đoạn có độ dài k và đảo ngược mỗi đoạn, sau đó gửi mảng đã xử lý lên server. Ví dụ: Với k = 3 và mảng "1,2,3,4,5,6,7,8", kết quả là "3,2,1,6,5,4,8,7". Gửi chuỗi kết quả "3,2,1,6,5,4,8,7" lên server.<br>
+ d. Đóng kết nối và kết thúc chương trình<br>
  */
 
 public class TCPClient {
