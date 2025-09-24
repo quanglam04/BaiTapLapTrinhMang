@@ -1,4 +1,4 @@
-package BaiTap.UDP.vi55NqdH;
+package BaiTap.UDP.UDP_vi55NqdH;
 
 import BaiTap.Config.Config;
 import java.net.DatagramPacket;
