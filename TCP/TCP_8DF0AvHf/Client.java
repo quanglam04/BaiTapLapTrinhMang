@@ -1,4 +1,4 @@
-package BaiTap.TCP_8DF0AvHf;
+package BaiTap.TCP.TCP_8DF0AvHf;
 
 import BaiTap.Config.Config;
 import java.io.DataInputStream;

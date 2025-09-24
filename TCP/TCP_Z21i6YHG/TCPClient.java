@@ -1,4 +1,4 @@
-package BaiTap.TCP_Z21i6YHG;
+package BaiTap.TCP.TCP_Z21i6YHG;
 
 import BaiTap.Config.Config;
 import java.io.BufferedReader;

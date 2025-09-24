@@ -1,4 +1,4 @@
-package BaiTap.TCP_Me6jetPg;
+package BaiTap.TCP.TCP_Me6jetPg;
 
 import BaiTap.Config.Config;
 import java.io.IOException;
@@ -68,4 +68,5 @@ public class Client{
 
   }
 }
+
 

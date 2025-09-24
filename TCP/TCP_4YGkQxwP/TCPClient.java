@@ -1,4 +1,4 @@
-package BaiTap.TCP_4YGkQxwP;
+package BaiTap.TCP.TCP_4YGkQxwP;
 
 import BaiTap.Config.Config;
 import java.io.BufferedReader;

@@ -1,4 +1,4 @@
-package BaiTap.TCP_KT19kvT7;
+package BaiTap.TCP.TCP_KT19kvT7;
 
 import BaiTap.Config.Config;
 import java.io.IOException;

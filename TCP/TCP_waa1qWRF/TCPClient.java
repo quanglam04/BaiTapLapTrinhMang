@@ -1,4 +1,4 @@
-package BaiTap.TCP_waa1qWRF;
+package BaiTap.TCP.TCP_waa1qWRF;
 
 import BaiTap.Config.Config;
 import java.net.*;

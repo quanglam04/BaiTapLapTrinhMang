@@ -1,4 +1,4 @@
-package BaiTap.TCP_YfnoRfSR;
+package BaiTap.TCP.TCP_YfnoRfSR;
 
 import BaiTap.Config.Config;
 import java.io.DataInputStream;
