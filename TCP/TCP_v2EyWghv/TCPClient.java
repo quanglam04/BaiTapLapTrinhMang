@@ -1,111 +1,113 @@
 package BaiTap.TCP.TCP_v2EyWghv;
 
-import BaiTap.Config.Config;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 public class TCPClient {
-  public static final int SERVER_PORT = 2206;
-  public static final String SERVER_HOST = Config.SERVER_HOST;
-  public static final String Q_CODE = "v2EyWghv";
-
   public static void main(String[] args) {
-    // Sử dụng try-with-resources để đảm bảo Socket và luồng được đóng an toàn
-    try (Socket socket = new Socket(SERVER_HOST, SERVER_PORT);
-        InputStream ip = socket.getInputStream();
-        OutputStream op = socket.getOutputStream()) {
+    String serverAddress = "203.162.10.109";
+    int port = 2206;
+    String studentCode = "B22DCCN482";
+    String qCode = "v2EyWghv";
 
-      // a. Gửi mã sinh viên và mã câu hỏi: "studentCode;qCode"
-      String initMessage = Config.STUDENT_CODE + ";" + Q_CODE;
-      op.write(initMessage.getBytes(StandardCharsets.US_ASCII));
-      op.flush();
-      System.out.println("-> Sent initialization: " + initMessage);
+    Socket socket = null;
 
-      // b. Nhận dữ liệu từ server
-      byte[] buffer = new byte[4096]; // Tăng kích thước buffer để đảm bảo nhận đủ mảng lớn
-      int byteRead = ip.read(buffer);
+    try {
+      // Bước 1: Kết nối tới server
+      socket = new Socket(serverAddress, port);
+      System.out.println("Đã kết nối tới server " + serverAddress + ":" + port);
 
-      if (byteRead > 0) {
-        String dataString = new String(buffer, 0, byteRead, StandardCharsets.US_ASCII).trim();
-        System.out.println("<- Received data: " + dataString);
+      // Khởi tạo luồng input/output
+      InputStream is = socket.getInputStream();
+      OutputStream os = socket.getOutputStream();
+      BufferedReader br = new BufferedReader(new InputStreamReader(is));
+      PrintWriter pw = new PrintWriter(os, true);
 
-        // Chuyển chuỗi CSV thành mảng số nguyên
-        int[] numbers;
-        try {
-          numbers = Arrays.stream(dataString.split(","))
-              .mapToInt(Integer::parseInt)
-              .toArray();
-        } catch (NumberFormatException e) {
-          System.err.println("Error parsing received data: " + e.getMessage());
-          return;
-        }
+      // Bước 2: Gửi mã sinh viên và mã câu hỏi
+      String message = studentCode + ";" + qCode;
+      pw.println(message);
+      System.out.println("Đã gửi: " + message);
 
-        // c. Xử lý tìm chuỗi con tăng dần dài nhất (Longest Increasing SUBARRAY)
-        // Lưu ý: Nếu Server yêu cầu LIS (Subsequence), hàm này sẽ sai.
-        String resultMessage = findLongestIncreasingSubarray(numbers);
+      // Bước 3: Nhận dữ liệu từ server
+      String receivedData = br.readLine();
+      System.out.println("Nhận được: " + receivedData);
 
-        // Gửi kết quả lên server theo format: "chuỗi tăng dài nhất; độ dài"
-        op.write(resultMessage.getBytes(StandardCharsets.US_ASCII));
-        op.flush();
-        System.out.println("-> Sent result: " + resultMessage);
-
-      } else if (byteRead == 0) {
-        System.out.println("Server sent no data.");
-      } else {
-        System.out.println("Server closed connection.");
+      // Bước 4: Xử lý dữ liệu - tìm chuỗi con tăng dần dài nhất
+      String[] numberStrings = receivedData.split(",");
+      int[] numbers = new int[numberStrings.length];
+      for (int i = 0; i < numberStrings.length; i++) {
+        numbers[i] = Integer.parseInt(numberStrings[i].trim());
       }
 
-      // d. Đóng kết nối và kết thúc chương trình (xử lý bởi try-with-resources)
+      // Tìm chuỗi con tăng dần dài nhất
+      List<Integer> longestSequence = findLongestIncreasingSubsequence(numbers);
+
+      // Tạo chuỗi kết quả
+      StringBuilder result = new StringBuilder();
+      for (int i = 0; i < longestSequence.size(); i++) {
+        result.append(longestSequence.get(i));
+        if (i < longestSequence.size() - 1) {
+          result.append(",");
+        }
+      }
+      result.append(";").append(longestSequence.size());
+
+      // Bước 5: Gửi kết quả lên server
+      pw.println(result.toString());
+      System.out.println("Đã gửi kết quả: " + result.toString());
+
+      // Bước 6: Đóng kết nối
+      System.out.println("Hoàn thành!");
+
     } catch (IOException e) {
-      System.err.println("Connection or I/O error occurred: " + e.getMessage());
+      System.err.println("Lỗi: " + e.getMessage());
+      e.printStackTrace();
+    } finally {
+      try {
+        if (socket != null && !socket.isClosed()) {
+          socket.close();
+          System.out.println("Đã đóng kết nối");
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
-    System.out.println("--- Client program finished ---");
   }
 
   /**
-   * Thuật toán tìm chuỗi con tăng dần dài nhất (Longest Increasing SUBARRAY - Liên tiếp)
-   * @param numbers Mảng số nguyên đầu vào
-   * @return Chuỗi kết quả theo định dạng "chuỗi tăng dài nhất;độ dài"
+   * Tìm chuỗi con tăng dần liên tiếp dài nhất trong mảng
    */
-  private static String findLongestIncreasingSubarray(int[] numbers) {
-    if (numbers == null || numbers.length == 0) {
-      return ";" + 0;
+  private static List<Integer> findLongestIncreasingSubsequence(int[] arr) {
+    if (arr == null || arr.length == 0) {
+      return new ArrayList<>();
     }
 
-    int maxLength = 1;
-    int currentLength = 1;
-    int maxStartIndex = 0;
-    int currentStartIndex = 0;
+    List<Integer> longestSequence = new ArrayList<>();
+    List<Integer> currentSequence = new ArrayList<>();
 
-    for (int i = 1; i < numbers.length; i++) {
-      if (numbers[i] > numbers[i - 1]) {
-        currentLength++;
+    currentSequence.add(arr[0]);
+
+    for (int i = 1; i < arr.length; i++) {
+      if (arr[i] > arr[i - 1]) {
+        // Nếu số hiện tại lớn hơn số trước đó, thêm vào chuỗi hiện tại
+        currentSequence.add(arr[i]);
       } else {
-        // Đứt chuỗi: Reset độ dài về 1 và vị trí bắt đầu là i
-        currentLength = 1;
-        currentStartIndex = i;
-      }
-
-      // Cập nhật độ dài tối đa
-      if (currentLength > maxLength) {
-        maxLength = currentLength;
-        maxStartIndex = currentStartIndex;
+        // Nếu không, kiểm tra xem chuỗi hiện tại có dài hơn chuỗi dài nhất không
+        if (currentSequence.size() > longestSequence.size()) {
+          longestSequence = new ArrayList<>(currentSequence);
+        }
+        // Bắt đầu chuỗi mới
+        currentSequence.clear();
+        currentSequence.add(arr[i]);
       }
     }
 
-    // Trích xuất chuỗi con tăng dần dài nhất
-    int[] longestSubarray = Arrays.copyOfRange(numbers, maxStartIndex, maxStartIndex + maxLength);
+    // Kiểm tra lần cuối
+    if (currentSequence.size() > longestSequence.size()) {
+      longestSequence = new ArrayList<>(currentSequence);
+    }
 
-    // Định dạng thành chuỗi CSV (ví dụ: "5,10,20,25,50")
-    String longestSubarrayString = Arrays.stream(longestSubarray)
-        .mapToObj(String::valueOf)
-        .collect(Collectors.joining(","));
-
-    return longestSubarrayString + ";" + maxLength;
+    return longestSequence;
   }
 }
