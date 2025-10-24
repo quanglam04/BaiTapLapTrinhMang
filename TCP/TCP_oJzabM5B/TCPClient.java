@@ -6,27 +6,21 @@ import java.io.DataOutputStream;
 import java.net.Socket;
 
 public class TCPClient {
-  public static final int SERVER_PORT = 2207;
-  public static final String SERVER_HOST = Config.SERVER_HOST;
   public static void main(String[] args) throws Exception {
-    Socket socket = new Socket(SERVER_HOST,SERVER_PORT);
-    DataInputStream dis = new DataInputStream(socket.getInputStream());
-    DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+    Socket socket = new Socket(Config.SERVER_HOST,2207);
+    DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+    DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
-    String message = Config.STUDENT_CODE+";oJzabM5B";
-    dos.writeUTF(message);
-    dos.flush();
-    System.out.println("Send data to server");
+    String message = "B22DCCN482;oJzabM5B";
+    dataOutputStream.writeUTF(message);
+    dataOutputStream.flush();
 
-    int a = dis.readInt();
-    int b = dis.readInt();
-    int c = a + b;
-    int d = a*b;
-    dos.writeInt(c);
-    dos.flush();
-    dos.writeInt(d);
-    dos.flush();
+    int a = dataInputStream.readInt();
+    int b = dataInputStream.readInt();
 
-    System.out.println("Send result to Server");
+    dataOutputStream.writeInt(a+b);
+    dataOutputStream.flush();
+    dataOutputStream.writeInt(a*b);
+    dataOutputStream.flush();
   }
 }
